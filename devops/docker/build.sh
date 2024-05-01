@@ -1,0 +1,1 @@
+docker build --tag=lcsmachaado/attus-processo-seletivo:latest .
