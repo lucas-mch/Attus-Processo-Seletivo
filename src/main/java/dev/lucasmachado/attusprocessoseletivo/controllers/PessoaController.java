@@ -1,4 +1,4 @@
-package dev.lucasmachado.attusprocessoseletivo.controller;
+package dev.lucasmachado.attusprocessoseletivo.controllers;
 
 import dev.lucasmachado.attusprocessoseletivo.model.Pessoa;
 import org.springframework.http.ResponseEntity;
