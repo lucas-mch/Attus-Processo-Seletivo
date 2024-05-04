@@ -1,5 +1,6 @@
 package dev.lucasmachado.attusprocessoseletivo.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 @Entity
@@ -12,6 +13,7 @@ public class Endereco extends AbstractEntity {
     private Boolean isPrincipal = Boolean.FALSE;
     @ManyToOne
     @JoinColumn(name="i_pessoas", referencedColumnName = "id")
+    @JsonIgnore
     private Pessoa pessoa;
 
     public Endereco() {
