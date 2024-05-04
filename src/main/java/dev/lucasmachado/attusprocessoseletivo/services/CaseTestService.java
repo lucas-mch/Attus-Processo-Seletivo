@@ -1,25 +1,33 @@
 package dev.lucasmachado.attusprocessoseletivo.services;
 
+import dev.lucasmachado.attusprocessoseletivo.repositories.EnderecoRepository;
 import dev.lucasmachado.attusprocessoseletivo.repositories.PessoaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import static dev.lucasmachado.attusprocessoseletivo.factories.PessoaFactory.newPessoa;
+import static dev.lucasmachado.attusprocessoseletivo.factories.EnderecoFactory.enderecoPadrao;
+import static dev.lucasmachado.attusprocessoseletivo.factories.PessoaFactory.pessoaPadrao;
 
 @Service
 public class CaseTestService {
 
     @Autowired
     private PessoaRepository pessoaRepository;
+    @Autowired
+    private EnderecoRepository enderecoRepository;
 
     public void initializeCaseTests() {
         populatePessoaTable();
+        populateEnderecoTable();
     }
 
     public void populatePessoaTable() {
-        pessoaRepository.save(newPessoa(null,null,null,null));
-        pessoaRepository.save(newPessoa("Lucas",null,null,null));
-        pessoaRepository.save(newPessoa("Rodolfo",null,null,null));
+        pessoaRepository.save(pessoaPadrao(null));
+        pessoaRepository.save(pessoaPadrao("Lucas"));
+        pessoaRepository.save(pessoaPadrao("Rodolfo"));
+    }
+    public void populateEnderecoTable() {
+        enderecoRepository.save(enderecoPadrao());
     }
 
 }

@@ -2,6 +2,7 @@ package dev.lucasmachado.attusprocessoseletivo.services;
 
 import dev.lucasmachado.attusprocessoseletivo.AttusProcessoSeletivoApplication;
 
+import dev.lucasmachado.attusprocessoseletivo.factories.PessoaFactory;
 import dev.lucasmachado.attusprocessoseletivo.model.Pessoa;
 import dev.lucasmachado.attusprocessoseletivo.repositories.PessoaRepository;
 import org.hibernate.ObjectNotFoundException;
@@ -18,7 +19,8 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import java.util.*;
 
-import static dev.lucasmachado.attusprocessoseletivo.factories.PessoaFactory.newPessoa;
+import static dev.lucasmachado.attusprocessoseletivo.factories.PessoaFactory.pessoaPadrao;
+
 
 @RunWith(SpringRunner.class)
 @DataJpaTest
@@ -35,7 +37,7 @@ public class PessoaServiceTest {
     @Test
     public void deveCriarUmaPessoa() {
 
-        Pessoa pessoaParaSalvar = newPessoa(null,9,11,1936);
+        Pessoa pessoaParaSalvar = pessoaPadrao(null);
 
         Pessoa pessoaSalva = pessoaService.save(pessoaParaSalvar);
 
@@ -46,10 +48,10 @@ public class PessoaServiceTest {
     @Test
     public void deveCriarMultiplasPessoas() {
         List<Pessoa> pessoasParaSalvar = Arrays.asList(
-                newPessoa("Lucas",11,1,1945),
-                newPessoa("Marcia",15,4,1925),
-                newPessoa("Thomas",5,4,1974),
-                newPessoa("Joana",2,7,1978)
+                pessoaPadrao("Lucas"),
+                pessoaPadrao("Marcia"),
+                pessoaPadrao("Thomas"),
+                pessoaPadrao("Joana")
         );
         List<Pessoa> pessoasSalvas = pessoaService.saveAll(pessoasParaSalvar);
         int idx = 0;
@@ -66,7 +68,7 @@ public class PessoaServiceTest {
     }
     @Test
     public void deveConsultarUmaPessoa() {
-        Pessoa pessoaDesejada = newPessoa(null,null,null,null);
+        Pessoa pessoaDesejada = pessoaPadrao(null);
         Pessoa pessoaPesquisada = pessoaService.find(1L);
         Assertions.assertNotNull(pessoaPesquisada.getId());
         Assertions.assertEquals(pessoaPesquisada.getNomeCompleto(),pessoaDesejada.getNomeCompleto());
@@ -80,8 +82,7 @@ public class PessoaServiceTest {
     }
     @Test
     public void naoDeveCriarPessoaSemNome() {
-        Pessoa pessoaSemNome = newPessoa("Lucas",11,10,1998);
-        pessoaSemNome.setNomeCompleto(null);
+        Pessoa pessoaSemNome = PessoaFactory.pessoaSemNome();
 
         MethodArgumentNotValidException ex = Assertions.assertThrows(MethodArgumentNotValidException.class,() -> pessoaService.save(pessoaSemNome));
 
@@ -89,8 +90,7 @@ public class PessoaServiceTest {
     }
     @Test
     public void naoDeveCriarPessoaSemDataNascimento() {
-        Pessoa pessoaSemNome = newPessoa("Lucas",11,10,1998);
-        pessoaSemNome.setDataNascimento(null);
+        Pessoa pessoaSemNome = PessoaFactory.pessoaSemDataNascimento();
 
         MethodArgumentNotValidException ex = Assertions.assertThrows(MethodArgumentNotValidException.class,() -> pessoaService.save(pessoaSemNome));
 
@@ -104,4 +104,8 @@ public class PessoaServiceTest {
         Assertions.assertNotNull(ex);
     }
 
+    @Test
+    public void deveAlterarUmaPessoa() {
+
+    }
 }
