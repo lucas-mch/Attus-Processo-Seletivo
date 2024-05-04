@@ -28,6 +28,8 @@ public class CaseTestService {
     }
     public void populateEnderecoTable() {
         enderecoRepository.save(enderecoPadrao());
+        enderecoRepository.save(enderecoPadrao());
+        enderecoRepository.save(enderecoPadrao());
     }
 
 }

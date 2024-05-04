@@ -13,6 +13,7 @@ import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -26,6 +27,7 @@ import static dev.lucasmachado.attusprocessoseletivo.factories.PessoaFactory.pes
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @ContextConfiguration(classes = AttusProcessoSeletivoApplication.class)
+@ComponentScan("dev.lucasmachado.attusprocessoseletivo")
 public class PessoaServiceTest {
 
     @Autowired
@@ -76,7 +78,7 @@ public class PessoaServiceTest {
     @Test
     public void deveConsultarMultiplasPessoas() {
         List<Long> ids = Arrays.asList(1L,2L,3L);
-        List<Pessoa> listaDePessoas = pessoaService.findList(ids);
+        List<Pessoa> listaDePessoas = pessoaService.findAll(ids);
         Assertions.assertNotNull(listaDePessoas);
         Assertions.assertEquals(listaDePessoas.size(), ids.size());
     }

@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/pessoas")
+@RequestMapping("endereco")
 public class EnderecoController {
 
     @RequestMapping(method = RequestMethod.GET)

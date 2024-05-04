@@ -11,6 +11,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -23,6 +24,7 @@ import java.util.List;
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @ContextConfiguration(classes = AttusProcessoSeletivoApplication.class)
+@ComponentScan("dev.lucasmachado.attusprocessoseletivo")
 public class EnderecoServiceTest {
 
     @Autowired
@@ -70,7 +72,7 @@ public class EnderecoServiceTest {
     public void deveTornarEnderecoPrincipal() {
         Endereco enderecoPrincipal = EnderecoFactory.enderecoPrincipal();
         Pessoa pessoaParaTornarEnderecoPrincipal = pessoaService.find(1L);
-        Endereco enderecoSalvoComoPrincipal = enderecoService.principal(enderecoPrincipal, 1L);
+        Endereco enderecoSalvoComoPrincipal = enderecoService.savePrincipal(enderecoPrincipal, 1L);
     }
 
     @Test
