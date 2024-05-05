@@ -1,10 +1,12 @@
 package dev.lucasmachado.attusprocessoseletivo.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import dev.lucasmachado.attusprocessoseletivo.dto.PessoaDTO;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -12,14 +14,20 @@ import java.util.List;
 
 @Entity
 @Table(name = "pessoas")
-public class Pessoa extends AbstractEntity {
+public class Pessoa extends AbstractEntity<PessoaDTO> {
 
+    @Column(name = "nome")
     private String nomeCompleto;
     @JsonFormat(pattern = "dd-MM-yyyy")
     @Column(name = "data_nascimento")
+    @NotNull
     private Date dataNascimento;
     @OneToMany(mappedBy = "pessoa")
     private List<Endereco> enderecos = new ArrayList<>();
+
+    public Pessoa() {
+
+    }
 
     public String getNomeCompleto() {
         return nomeCompleto;
@@ -43,6 +51,16 @@ public class Pessoa extends AbstractEntity {
 
     public void setEnderecos(List<Endereco> enderecos) {
         this.enderecos = enderecos;
+    }
+
+    @Override
+    public PessoaDTO toDTO() {
+        return new PessoaDTO(this);
+    }
+
+    public Pessoa(PessoaDTO dto) {
+        this.dataNascimento = dto.getDataNascimento();
+        this.nomeCompleto = dto.getNomeCompleto();
     }
 
     public static final class Builder {

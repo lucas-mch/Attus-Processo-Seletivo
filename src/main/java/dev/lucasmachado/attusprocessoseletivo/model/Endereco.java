@@ -1,18 +1,22 @@
 package dev.lucasmachado.attusprocessoseletivo.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import dev.lucasmachado.attusprocessoseletivo.dto.EnderecoDTO;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "enderecos")
-public class Endereco extends AbstractEntity {
+public class Endereco extends AbstractEntity<EnderecoDTO> {
+    @NotNull(message = "Nao deve ser nulo.")
     private String logradouro;
+    @NotNull(message = "Nao deve ser nulo.")
     private Integer CEP;
     private Integer numero;
     @Column(name = "fl_principal")
     private Boolean isPrincipal = Boolean.FALSE;
     @ManyToOne
-    @JoinColumn(name="i_pessoas", referencedColumnName = "id")
+    @JoinColumn(name = "i_pessoas", referencedColumnName = "id")
     @JsonIgnore
     private Pessoa pessoa;
 
@@ -51,15 +55,28 @@ public class Endereco extends AbstractEntity {
         this.numero = numero;
     }
 
-    public Boolean getPrincipal() { return isPrincipal; }
+    public Boolean getPrincipal() {
+        return isPrincipal;
+    }
 
-    public void setPrincipal(Boolean principal) { isPrincipal = principal; }
+    public void setPrincipal(Boolean principal) {
+        isPrincipal = principal;
+    }
 
-    public Pessoa getPessoa() { return pessoa; }
+    public Pessoa getPessoa() {
+        return pessoa;
+    }
 
-    public void setPessoa(Pessoa pessoa) { this.pessoa = pessoa; }
+    public void setPessoa(Pessoa pessoa) {
+        this.pessoa = pessoa;
+    }
 
-    public static final class Builder  {
+    @Override
+    public EnderecoDTO toDTO() {
+        return new EnderecoDTO(this);
+    }
+
+    public static final class Builder {
 
         protected Endereco entity;
 
@@ -75,23 +92,28 @@ public class Endereco extends AbstractEntity {
             entity.setId(id);
             return this;
         }
+
         public Builder logradouro(String logradouro) {
             entity.logradouro = logradouro;
             return this;
         }
+
         public Builder CEP(Integer CEP) {
             entity.CEP = CEP;
             return this;
         }
+
         public Builder numero(Integer numero) {
             entity.numero = numero;
             return this;
         }
+
         public Builder isPrincipal(Boolean isPrincipal) {
             entity.isPrincipal = isPrincipal;
             return this;
         }
-        public Endereco build(){
+
+        public Endereco build() {
             return entity;
         }
 

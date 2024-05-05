@@ -5,6 +5,7 @@ import dev.lucasmachado.attusprocessoseletivo.AttusProcessoSeletivoApplication;
 import dev.lucasmachado.attusprocessoseletivo.factories.PessoaFactory;
 import dev.lucasmachado.attusprocessoseletivo.model.Pessoa;
 import dev.lucasmachado.attusprocessoseletivo.repositories.PessoaRepository;
+import jakarta.validation.ConstraintViolationException;
 import org.hibernate.ObjectNotFoundException;
 import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
@@ -71,7 +72,7 @@ public class PessoaServiceTest {
     @Test
     public void deveConsultarUmaPessoa() {
         Pessoa pessoaDesejada = pessoaPadrao(null);
-        Pessoa pessoaPesquisada = pessoaService.find(1L);
+        Pessoa pessoaPesquisada = pessoaService.findById(1L);
         Assertions.assertNotNull(pessoaPesquisada.getId());
         Assertions.assertEquals(pessoaPesquisada.getNomeCompleto(),pessoaDesejada.getNomeCompleto());
     }
@@ -86,7 +87,7 @@ public class PessoaServiceTest {
     public void naoDeveCriarPessoaSemNome() {
         Pessoa pessoaSemNome = PessoaFactory.pessoaSemNome();
 
-        MethodArgumentNotValidException ex = Assertions.assertThrows(MethodArgumentNotValidException.class,() -> pessoaService.save(pessoaSemNome));
+        ConstraintViolationException ex = Assertions.assertThrows(ConstraintViolationException.class,() -> pessoaService.save(pessoaSemNome));
 
         Assertions.assertNotNull(ex);
     }
@@ -94,14 +95,14 @@ public class PessoaServiceTest {
     public void naoDeveCriarPessoaSemDataNascimento() {
         Pessoa pessoaSemNome = PessoaFactory.pessoaSemDataNascimento();
 
-        MethodArgumentNotValidException ex = Assertions.assertThrows(MethodArgumentNotValidException.class,() -> pessoaService.save(pessoaSemNome));
+        ConstraintViolationException ex = Assertions.assertThrows(ConstraintViolationException.class,() -> pessoaService.save(pessoaSemNome));
 
         Assertions.assertNotNull(ex);
     }
     @Test
     public void deveLancarExceptionAoConsultarPessoaNaoExistente() {
 
-        ObjectNotFoundException ex = Assertions.assertThrows(ObjectNotFoundException.class,() -> pessoaService.find(999L));
+        NoSuchElementException ex = Assertions.assertThrows(NoSuchElementException.class,() -> pessoaService.findById(999L));
 
         Assertions.assertNotNull(ex);
     }
