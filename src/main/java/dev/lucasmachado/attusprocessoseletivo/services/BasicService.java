@@ -4,14 +4,15 @@ import jakarta.validation.Valid;
 
 import java.util.List;
 
-public interface BasicService<Entity> {
-    Entity save(@Valid Entity e);
+public interface BasicService<EntityDTO> {
+    EntityDTO save(@Valid EntityDTO dto);
 
-    Entity find(Long id);
+    EntityDTO findById(Long id);
 
-    List<Entity> findAll(List<Long> ids);
+    List<EntityDTO> findAll(List<Long> ids);
+    List<EntityDTO> findAll();
 
-    Entity update(@Valid Entity e);
+    EntityDTO update(@Valid EntityDTO dto);
 
-    List<Entity> saveAll(List<@Valid Entity> entities);
+    List<EntityDTO> saveAll(List<@Valid EntityDTO> entities);
 }

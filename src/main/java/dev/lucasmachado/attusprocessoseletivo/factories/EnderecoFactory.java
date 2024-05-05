@@ -6,12 +6,19 @@ import dev.lucasmachado.attusprocessoseletivo.repositories.EnderecoRepository;
 public class EnderecoFactory {
 
     public static Endereco enderecoPadrao() {
-        return Endereco.Builder.create().build();
+        return Endereco.Builder.create()
+                .CEP(88708071)
+                .logradouro("Manoel Jovencio")
+                .numero(133)
+                .build();
     }
 
     public static Endereco enderecoPrincipal() {
         return Endereco.Builder.create()
-            .isPrincipal(true)
+                .CEP(88708071)
+                .logradouro("Manoel Jovencio")
+                .numero(133)
+                .isPrincipal(true)
                 .build();
     }
 

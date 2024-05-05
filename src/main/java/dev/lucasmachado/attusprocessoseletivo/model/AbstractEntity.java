@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 @MappedSuperclass
-public abstract class AbstractEntity implements Serializable {
+public abstract class AbstractEntity<Entity> implements IEntity<Entity> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -20,8 +20,7 @@ public abstract class AbstractEntity implements Serializable {
     @Column(name="updated_at")
     private Timestamp updatedAt;
 
-    public AbstractEntity(){
-        this.createdAt = Timestamp.valueOf(LocalDateTime.now());
+    public AbstractEntity() {
         this.updatedAt = Timestamp.valueOf(LocalDateTime.now());
     }
 
