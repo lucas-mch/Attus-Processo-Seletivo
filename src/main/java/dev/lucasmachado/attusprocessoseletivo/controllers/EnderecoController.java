@@ -1,9 +1,11 @@
 package dev.lucasmachado.attusprocessoseletivo.controllers;
 
+import dev.lucasmachado.attusprocessoseletivo.dto.EnderecoDTO;
 import dev.lucasmachado.attusprocessoseletivo.model.Endereco;
 import dev.lucasmachado.attusprocessoseletivo.model.Pessoa;
 import dev.lucasmachado.attusprocessoseletivo.services.EnderecoService;
 import dev.lucasmachado.attusprocessoseletivo.services.PessoaService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,8 +23,8 @@ public class EnderecoController {
     private EnderecoService enderecoService;
 
     @RequestMapping(method = RequestMethod.POST)
-    public ResponseEntity<Void> insertEndereco(@RequestBody Endereco endereco, @RequestParam Long pessoaId) {
-        endereco = enderecoService.saveToPessoa(endereco, pessoaId);
+    public ResponseEntity<Void> insertEndereco(@RequestBody @Valid EnderecoDTO enderecoDTO, @RequestParam Long pessoaId) {
+        Endereco endereco = enderecoService.saveToPessoa(enderecoDTO.toEntity(), pessoaId);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}").buildAndExpand(endereco.getId()).toUri();
         return ResponseEntity.created(uri).build();
@@ -35,8 +37,8 @@ public class EnderecoController {
     }
 
     @RequestMapping(value = "/principal",method = RequestMethod.GET)
-    public Endereco setEnderecoPrincipal(@RequestParam Long pessoaId, @RequestParam Long enderecoId) {
-        return enderecoService.savePrincipal(pessoaId, enderecoId);
+    public Endereco setEnderecoPrincipal(@RequestParam Long enderecoId, @RequestParam Long pessoaId) {
+        return enderecoService.savePrincipal(enderecoId,pessoaId);
     }
 
 }

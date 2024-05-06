@@ -3,6 +3,7 @@ package dev.lucasmachado.attusprocessoseletivo.controllers;
 import dev.lucasmachado.attusprocessoseletivo.dto.PessoaDTO;
 import dev.lucasmachado.attusprocessoseletivo.model.Pessoa;
 import dev.lucasmachado.attusprocessoseletivo.services.PessoaService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,10 +19,10 @@ public class PessoaController {
     private PessoaService pessoaService;
 
     @RequestMapping(method = RequestMethod.POST)
-    public ResponseEntity<Void> insert(@RequestBody PessoaDTO pessoa) {
-        PessoaDTO pessoaSalva = pessoaService.save(pessoa);
+    public ResponseEntity<Void> insert(@RequestBody @Valid PessoaDTO pessoa) {
+        Pessoa pessoaSalva = pessoaService.save(pessoa.toEntity());
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
-                .path("/{id}").buildAndExpand(pessoaSalva.toEntity().getId()).toUri();
+                .path("/{id}").buildAndExpand(pessoaSalva.getId()).toUri();
         return ResponseEntity.created(uri).build();
     }
 
@@ -32,14 +33,13 @@ public class PessoaController {
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public ResponseEntity<?> find(@PathVariable Long id) {
-        PessoaDTO pessoaToFind = pessoaService.findById(id);
-        return ResponseEntity.ok().body(pessoaToFind);
+    public ResponseEntity<PessoaDTO> find(@PathVariable Long id) {
+        return ResponseEntity.ok().body(new PessoaDTO().from(pessoaService.findById(id)));
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    public ResponseEntity<?> findAll() {
+    public ResponseEntity<List<PessoaDTO>> findAll() {
         List<Pessoa> list = pessoaService.findAll();
-        return ResponseEntity.ok().body(list);
+        return ResponseEntity.ok().body(new PessoaDTO().fromList(list));
     }
 }
