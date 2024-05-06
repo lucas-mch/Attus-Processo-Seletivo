@@ -4,31 +4,29 @@ import dev.lucasmachado.attusprocessoseletivo.dto.PessoaDTO;
 import dev.lucasmachado.attusprocessoseletivo.model.Pessoa;
 import dev.lucasmachado.attusprocessoseletivo.repositories.PessoaRepository;
 import jakarta.validation.Valid;
-import org.hibernate.ObjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-public class PessoaService implements BasicService<PessoaDTO> {
+public class PessoaService implements BasicService<Pessoa> {
 
     @Autowired
     private PessoaRepository pessoaRepository;
 
     @Override
-    public PessoaDTO save(PessoaDTO e) {
-        return pessoaRepository.save(e.toEntity()).toDTO();
+    public Pessoa save(Pessoa p) {
+        return pessoaRepository.save(p);
     }
 
     @Override
-    public PessoaDTO findById(Long id) {
-        Pessoa pessoaEncontrada = pessoaRepository.findById(id).orElseThrow();
-        return pessoaEncontrada.toDTO();
+    public Pessoa findById(Long id) {
+        return pessoaRepository.findById(id).orElseThrow();
     }
 
     @Override
-    public List<PessoaDTO> findAll(List<Long> ids) {
+    public List<Pessoa> findAll(List<Long> ids) {
         return pessoaRepository.findAllById(ids);
     }
 
@@ -43,7 +41,7 @@ public class PessoaService implements BasicService<PessoaDTO> {
     }
 
     @Override
-    public List<Pessoa> saveAll(List<Pessoa> pessoas) {
+    public List<Pessoa> saveAll(List<@Valid Pessoa> pessoas) {
         return pessoaRepository.saveAll(pessoas);
     }
 }
