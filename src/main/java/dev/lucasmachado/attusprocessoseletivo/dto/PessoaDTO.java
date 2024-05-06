@@ -3,6 +3,8 @@ package dev.lucasmachado.attusprocessoseletivo.dto;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import dev.lucasmachado.attusprocessoseletivo.model.Pessoa;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Past;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.beans.BeanUtils;
 
@@ -17,8 +19,28 @@ public class PessoaDTO implements DefaultDTO<Pessoa, PessoaDTO> {
     private String nomeCompleto;
 
     @JsonFormat(pattern = "dd-MM-yyyy")
-    @NotEmpty(message = "")
+    @Past
+    @NotNull
     private Date dataNascimento;
+
+    public PessoaDTO() {
+    }
+
+    public String getNomeCompleto() {
+        return nomeCompleto;
+    }
+
+    public void setNomeCompleto(String nomeCompleto) {
+        this.nomeCompleto = nomeCompleto;
+    }
+
+    public Date getDataNascimento() {
+        return dataNascimento;
+    }
+
+    public void setDataNascimento(Date dataNascimento) {
+        this.dataNascimento = dataNascimento;
+    }
 
     @Override
     public Pessoa toEntity() {
@@ -26,16 +48,16 @@ public class PessoaDTO implements DefaultDTO<Pessoa, PessoaDTO> {
     }
 
     @Override
-    public PessoaDTO convert(Pessoa pessoa) {
-        BeanUtils.copyProperties(pessoa, this, "id", "nomeCompleto", "dataNascimento");
+    public PessoaDTO from(Pessoa pessoa) {
+        BeanUtils.copyProperties(pessoa, this, "id");
         return this;
     }
 
     @Override
-    public List<PessoaDTO> convertToList(List<Pessoa> dto) {
+    public List<PessoaDTO> fromList(List<Pessoa> pessoaList) {
         List<PessoaDTO> convertedList = new ArrayList<>();
-        dto.forEach(entity -> {
-            convertedList.add(this.convert(entity));
+        pessoaList.forEach(entity -> {
+            convertedList.add(new PessoaDTO().from(entity));
         });
         return convertedList;
     }
