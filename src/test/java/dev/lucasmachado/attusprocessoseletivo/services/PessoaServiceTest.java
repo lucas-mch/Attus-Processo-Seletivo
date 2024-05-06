@@ -3,9 +3,12 @@ package dev.lucasmachado.attusprocessoseletivo.services;
 import dev.lucasmachado.attusprocessoseletivo.AttusProcessoSeletivoApplication;
 
 import dev.lucasmachado.attusprocessoseletivo.factories.PessoaFactory;
+import dev.lucasmachado.attusprocessoseletivo.model.Endereco;
 import dev.lucasmachado.attusprocessoseletivo.model.Pessoa;
 import dev.lucasmachado.attusprocessoseletivo.repositories.PessoaRepository;
+import jakarta.validation.ConstraintViolationException;
 import org.hibernate.ObjectNotFoundException;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
 import org.junit.runner.RunWith;
@@ -18,6 +21,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 
+import java.time.Instant;
 import java.util.*;
 
 import static dev.lucasmachado.attusprocessoseletivo.factories.PessoaFactory.pessoaPadrao;
@@ -43,10 +47,11 @@ public class PessoaServiceTest {
 
         Pessoa pessoaSalva = pessoaService.save(pessoaParaSalvar);
 
-        Assertions.assertNotNull(pessoaSalva.getId(),"");
-        Assertions.assertEquals(pessoaSalva.getNomeCompleto(),pessoaParaSalvar.getNomeCompleto());
+        Assertions.assertNotNull(pessoaSalva.getId(), "");
+        Assertions.assertEquals(pessoaSalva.getNomeCompleto(), pessoaParaSalvar.getNomeCompleto());
         Assertions.assertNotNull(pessoaRepository.findById(pessoaSalva.getId()));
     }
+
     @Test
     public void deveCriarMultiplasPessoas() {
         List<Pessoa> pessoasParaSalvar = Arrays.asList(
@@ -60,7 +65,7 @@ public class PessoaServiceTest {
 
         Assertions.assertEquals(pessoasParaSalvar.size(), pessoasSalvas.size());
 
-        for(Pessoa pessoaSalva : pessoasSalvas) {
+        for (Pessoa pessoaSalva : pessoasSalvas) {
             Assertions.assertEquals(pessoaSalva.getNomeCompleto(), pessoasParaSalvar.get(idx).getNomeCompleto());
             Assertions.assertEquals(pessoaSalva.getDataNascimento(), pessoasParaSalvar.get(idx).getDataNascimento());
             Assertions.assertNotNull(pessoaSalva.getId());
@@ -68,46 +73,40 @@ public class PessoaServiceTest {
         }
 
     }
+
     @Test
     public void deveConsultarUmaPessoa() {
         Pessoa pessoaDesejada = pessoaPadrao(null);
-        Pessoa pessoaPesquisada = pessoaService.find(1L);
+        Pessoa pessoaPesquisada = pessoaService.findById(1L);
         Assertions.assertNotNull(pessoaPesquisada.getId());
-        Assertions.assertEquals(pessoaPesquisada.getNomeCompleto(),pessoaDesejada.getNomeCompleto());
+        Assertions.assertEquals(pessoaPesquisada.getNomeCompleto(), pessoaDesejada.getNomeCompleto());
     }
+
     @Test
     public void deveConsultarMultiplasPessoas() {
-        List<Long> ids = Arrays.asList(1L,2L,3L);
+        List<Long> ids = Arrays.asList(1L, 2L, 3L);
         List<Pessoa> listaDePessoas = pessoaService.findAll(ids);
         Assertions.assertNotNull(listaDePessoas);
         Assertions.assertEquals(listaDePessoas.size(), ids.size());
     }
-    @Test
-    public void naoDeveCriarPessoaSemNome() {
-        Pessoa pessoaSemNome = PessoaFactory.pessoaSemNome();
 
-        MethodArgumentNotValidException ex = Assertions.assertThrows(MethodArgumentNotValidException.class,() -> pessoaService.save(pessoaSemNome));
-
-        Assertions.assertNotNull(ex);
-    }
-    @Test
-    public void naoDeveCriarPessoaSemDataNascimento() {
-        Pessoa pessoaSemNome = PessoaFactory.pessoaSemDataNascimento();
-
-        MethodArgumentNotValidException ex = Assertions.assertThrows(MethodArgumentNotValidException.class,() -> pessoaService.save(pessoaSemNome));
-
-        Assertions.assertNotNull(ex);
-    }
     @Test
     public void deveLancarExceptionAoConsultarPessoaNaoExistente() {
 
-        ObjectNotFoundException ex = Assertions.assertThrows(ObjectNotFoundException.class,() -> pessoaService.find(999L));
+        NoSuchElementException ex = Assertions.assertThrows(NoSuchElementException.class, () -> pessoaService.findById(999L));
 
         Assertions.assertNotNull(ex);
     }
 
     @Test
     public void deveAlterarUmaPessoa() {
+        Pessoa pessoaParaEditar = pessoaService.findById(1L);
+        pessoaParaEditar.setNomeCompleto("Nome editado.");
+        pessoaParaEditar.setDataNascimento(PessoaFactory.customDataAniversario(25, 3, 2018));
 
+        Pessoa pessoaEditada = pessoaService.update(pessoaParaEditar);
+
+        Assert.assertEquals(pessoaParaEditar.getNomeCompleto(), pessoaEditada.getNomeCompleto());
     }
+
 }

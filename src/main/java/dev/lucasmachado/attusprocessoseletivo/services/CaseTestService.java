@@ -13,6 +13,7 @@ public class CaseTestService {
 
     @Autowired
     private PessoaRepository pessoaRepository;
+
     @Autowired
     private EnderecoRepository enderecoRepository;
 

@@ -1,30 +1,46 @@
 package dev.lucasmachado.attusprocessoseletivo.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import dev.lucasmachado.attusprocessoseletivo.dto.EnderecoDTO;
 import jakarta.persistence.*;
+import org.springframework.beans.BeanUtils;
 
 @Entity
 @Table(name = "enderecos")
-public class Endereco extends AbstractEntity {
+public class Endereco extends AbstractEntity<EnderecoDTO> {
+
     private String logradouro;
-    private Integer CEP;
+    private Integer cep;
     private Integer numero;
+    private String estado;
+    private String cidade;
     @Column(name = "fl_principal")
     private Boolean isPrincipal = Boolean.FALSE;
     @ManyToOne
-    @JoinColumn(name="i_pessoas", referencedColumnName = "id")
-    @JsonIgnore
+    @JoinColumn(name = "i_pessoas", referencedColumnName = "id")
     private Pessoa pessoa;
 
     public Endereco() {
     }
 
-    public Endereco(Long id, String logradouro, Integer CEP, Integer numero, Boolean isPrincipal) {
-        super(id);
-        this.logradouro = logradouro;
-        this.CEP = CEP;
-        this.numero = numero;
-        this.isPrincipal = isPrincipal;
+    public Endereco(EnderecoDTO dto) {
+        BeanUtils.copyProperties(dto, this, "id");
+    }
+
+    public String getEstado() {
+        return estado;
+    }
+
+    public void setEstado(String estado) {
+        this.estado = estado;
+    }
+
+    public String getCidade() {
+        return cidade;
+    }
+
+    public void setCidade(String cidade) {
+        this.cidade = cidade;
     }
 
     public String getLogradouro() {
@@ -36,11 +52,11 @@ public class Endereco extends AbstractEntity {
     }
 
     public Integer getCEP() {
-        return CEP;
+        return cep;
     }
 
-    public void setCEP(Integer CEP) {
-        this.CEP = CEP;
+    public void setCep(Integer cep) {
+        this.cep = cep;
     }
 
     public Integer getNumero() {
@@ -51,15 +67,23 @@ public class Endereco extends AbstractEntity {
         this.numero = numero;
     }
 
-    public Boolean getPrincipal() { return isPrincipal; }
+    public Boolean getPrincipal() {
+        return isPrincipal;
+    }
 
-    public void setPrincipal(Boolean principal) { isPrincipal = principal; }
+    public void setPrincipal(Boolean principal) {
+        isPrincipal = principal;
+    }
 
-    public Pessoa getPessoa() { return pessoa; }
+    public Pessoa getPessoa() {
+        return pessoa;
+    }
 
-    public void setPessoa(Pessoa pessoa) { this.pessoa = pessoa; }
+    public void setPessoa(Pessoa pessoa) {
+        this.pessoa = pessoa;
+    }
 
-    public static final class Builder  {
+    public static final class Builder {
 
         protected Endereco entity;
 
@@ -75,23 +99,28 @@ public class Endereco extends AbstractEntity {
             entity.setId(id);
             return this;
         }
+
         public Builder logradouro(String logradouro) {
             entity.logradouro = logradouro;
             return this;
         }
-        public Builder CEP(Integer CEP) {
-            entity.CEP = CEP;
+
+        public Builder CEP(Integer cep) {
+            entity.cep = cep;
             return this;
         }
+
         public Builder numero(Integer numero) {
             entity.numero = numero;
             return this;
         }
+
         public Builder isPrincipal(Boolean isPrincipal) {
             entity.isPrincipal = isPrincipal;
             return this;
         }
-        public Endereco build(){
+
+        public Endereco build() {
             return entity;
         }
 

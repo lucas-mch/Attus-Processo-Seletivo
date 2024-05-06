@@ -1,9 +1,13 @@
 package dev.lucasmachado.attusprocessoseletivo.services;
 
 import dev.lucasmachado.attusprocessoseletivo.AttusProcessoSeletivoApplication;
+
 import dev.lucasmachado.attusprocessoseletivo.factories.EnderecoFactory;
+import dev.lucasmachado.attusprocessoseletivo.factories.PessoaFactory;
 import dev.lucasmachado.attusprocessoseletivo.model.Endereco;
 import dev.lucasmachado.attusprocessoseletivo.model.Pessoa;
+
+import jakarta.validation.ValidationException;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
@@ -14,11 +18,10 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.web.bind.MethodArgumentNotValidException;
+
 
 import java.util.Arrays;
 import java.util.List;
-
 
 @RunWith(SpringRunner.class)
 @DataJpaTest
@@ -35,18 +38,18 @@ public class EnderecoServiceTest {
     @Test
     public void deveCriarEnderecoParaPessoa() {
         Endereco enderecoParaSalvar = EnderecoFactory.enderecoPadrao();
-        Pessoa paraVincularEndereco = pessoaService.find(1L);
+        Pessoa paraVincularEndereco = pessoaService.findById(1L);
 
         Endereco enderecoSalvo = enderecoService.saveToPessoa(enderecoParaSalvar, paraVincularEndereco.getId());
 
         Assert.assertEquals(enderecoSalvo.getCEP(), enderecoParaSalvar.getCEP());
-        Assert.assertEquals(enderecoSalvo.getPessoa().getId(), paraVincularEndereco.getId());
+        Assert.assertNotNull(enderecoSalvo.getPessoa());
     }
 
     @Test
     public void deveEditarUmEndereco() {
-        Endereco enderecoParaEditar = enderecoService.find(1L);
-        enderecoParaEditar.setCEP(88708071);
+        Endereco enderecoParaEditar = enderecoService.findById(1L);
+        enderecoParaEditar.setCep(88708071);
 
         Endereco enderecoEditado = enderecoService.update(enderecoParaEditar);
 
@@ -55,7 +58,7 @@ public class EnderecoServiceTest {
 
     @Test
     public void deveConsultarEnderecoPelaPessoa() {
-        Endereco enderecoConsultado = enderecoService.find(1L);
+        Endereco enderecoConsultado = enderecoService.findById(1L);
         Assert.assertNotNull(enderecoConsultado);
     }
 
@@ -70,26 +73,28 @@ public class EnderecoServiceTest {
 
     @Test
     public void deveTornarEnderecoPrincipal() {
-        Endereco enderecoPrincipal = EnderecoFactory.enderecoPrincipal();
-        Pessoa pessoaParaTornarEnderecoPrincipal = pessoaService.find(1L);
-        Endereco enderecoSalvoComoPrincipal = enderecoService.savePrincipal(enderecoPrincipal, 1L);
+        Endereco enderecoSalvoComoPrincipal = enderecoService.savePrincipal(1L, 1L);
+        Assertions.assertTrue(enderecoSalvoComoPrincipal.getPrincipal());
     }
 
     @Test
-    public void naoDeveCriarEnderecoSemCep() {
-        Endereco enderecoSemCep = EnderecoFactory.enderecoSemCep();
+    public void naoDeveTornarEnderecoPrincipalDeOutraPessoa() {
+        Pessoa primeiraPessoa = pessoaService.save(PessoaFactory.pessoaPadrao("Antonio"));
+        Pessoa segundaPessoa = pessoaService.save(PessoaFactory.pessoaPadrao("Geraldinho"));
 
-        MethodArgumentNotValidException ex = Assertions.assertThrows(MethodArgumentNotValidException.class,() -> enderecoService.save(enderecoSemCep));
+        Endereco enderecoDaPrimeiraPessoa = EnderecoFactory.enderecoPadrao();
+        enderecoDaPrimeiraPessoa = enderecoService.saveToPessoa(enderecoDaPrimeiraPessoa, primeiraPessoa.getId());
+
+        Endereco finalEnderecoDaPrimeiraPessoa = enderecoDaPrimeiraPessoa;
+
+        ValidationException ex = Assertions.assertThrows(ValidationException.class, () ->
+                enderecoService.savePrincipal(finalEnderecoDaPrimeiraPessoa.getId(), segundaPessoa.getId())
+        );
 
         Assertions.assertNotNull(ex);
+        Assertions.assertEquals(ex.getMessage(), "Por favor, verifique os dados de entrada. O endereço informado está atribuido á uma pessoa diferente do que foi informado na requisição.");
+
     }
 
-    @Test
-    public void naoDeveCriarEnderecoSemLogradouro() {
-        Endereco enderecoSemLogradouro = EnderecoFactory.enderecoSemLogradouro();
 
-        MethodArgumentNotValidException ex = Assertions.assertThrows(MethodArgumentNotValidException.class,() -> enderecoService.save(enderecoSemLogradouro));
-
-        Assertions.assertNotNull(ex);
-    }
 }

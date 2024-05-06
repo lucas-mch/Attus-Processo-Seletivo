@@ -3,6 +3,7 @@ package dev.lucasmachado.attusprocessoseletivo.factories;
 import dev.lucasmachado.attusprocessoseletivo.model.Pessoa;
 
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Objects;
 
 public class PessoaFactory {
@@ -39,6 +40,14 @@ public class PessoaFactory {
                 .nomeCompleto("Mikhail Tal")
                 .dataNascimento(null)
                 .build();
+    }
+
+    public static Date customDataAniversario(Integer dia, Integer mes, Integer ano) {
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.DAY_OF_MONTH, dia);
+        cal.set(Calendar.MONTH, mes);
+        cal.set(Calendar.YEAR, ano);
+        return cal.getTime();
     }
 
 }
