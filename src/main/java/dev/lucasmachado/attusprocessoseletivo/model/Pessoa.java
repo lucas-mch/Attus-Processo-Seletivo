@@ -7,6 +7,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
+import org.springframework.beans.BeanUtils;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -20,13 +21,11 @@ public class Pessoa extends AbstractEntity<PessoaDTO> {
     private String nomeCompleto;
     @JsonFormat(pattern = "dd-MM-yyyy")
     @Column(name = "data_nascimento")
-    @NotNull
     private Date dataNascimento;
     @OneToMany(mappedBy = "pessoa")
     private List<Endereco> enderecos = new ArrayList<>();
 
     public Pessoa() {
-
     }
 
     public String getNomeCompleto() {
@@ -53,14 +52,10 @@ public class Pessoa extends AbstractEntity<PessoaDTO> {
         this.enderecos = enderecos;
     }
 
-    @Override
-    public PessoaDTO toDTO() {
-        return new PessoaDTO(this);
-    }
+
 
     public Pessoa(PessoaDTO dto) {
-        this.dataNascimento = dto.getDataNascimento();
-        this.nomeCompleto = dto.getNomeCompleto();
+        BeanUtils.copyProperties(dto, this, "id");
     }
 
     public static final class Builder {

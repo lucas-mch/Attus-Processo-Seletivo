@@ -1,6 +1,6 @@
 package dev.lucasmachado.attusprocessoseletivo.model;
 
-public interface IEntity<DTO> {
-    DTO toDTO();
+import java.io.Serializable;
 
+public interface IEntity extends Serializable {
 }

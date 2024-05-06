@@ -3,32 +3,44 @@ package dev.lucasmachado.attusprocessoseletivo.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import dev.lucasmachado.attusprocessoseletivo.dto.EnderecoDTO;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
+import org.springframework.beans.BeanUtils;
 
 @Entity
 @Table(name = "enderecos")
 public class Endereco extends AbstractEntity<EnderecoDTO> {
-    @NotNull(message = "Nao deve ser nulo.")
+
     private String logradouro;
-    @NotNull(message = "Nao deve ser nulo.")
-    private Integer CEP;
+    private Integer cep;
     private Integer numero;
+    private String estado;
+    private String cidade;
     @Column(name = "fl_principal")
     private Boolean isPrincipal = Boolean.FALSE;
     @ManyToOne
     @JoinColumn(name = "i_pessoas", referencedColumnName = "id")
-    @JsonIgnore
     private Pessoa pessoa;
 
     public Endereco() {
     }
 
-    public Endereco(Long id, String logradouro, Integer CEP, Integer numero, Boolean isPrincipal) {
-        super(id);
-        this.logradouro = logradouro;
-        this.CEP = CEP;
-        this.numero = numero;
-        this.isPrincipal = isPrincipal;
+    public Endereco(EnderecoDTO dto) {
+        BeanUtils.copyProperties(dto, this, "id");
+    }
+
+    public String getEstado() {
+        return estado;
+    }
+
+    public void setEstado(String estado) {
+        this.estado = estado;
+    }
+
+    public String getCidade() {
+        return cidade;
+    }
+
+    public void setCidade(String cidade) {
+        this.cidade = cidade;
     }
 
     public String getLogradouro() {
@@ -40,11 +52,11 @@ public class Endereco extends AbstractEntity<EnderecoDTO> {
     }
 
     public Integer getCEP() {
-        return CEP;
+        return cep;
     }
 
-    public void setCEP(Integer CEP) {
-        this.CEP = CEP;
+    public void setCep(Integer cep) {
+        this.cep = cep;
     }
 
     public Integer getNumero() {
@@ -71,11 +83,6 @@ public class Endereco extends AbstractEntity<EnderecoDTO> {
         this.pessoa = pessoa;
     }
 
-    @Override
-    public EnderecoDTO toDTO() {
-        return new EnderecoDTO(this);
-    }
-
     public static final class Builder {
 
         protected Endereco entity;
@@ -98,8 +105,8 @@ public class Endereco extends AbstractEntity<EnderecoDTO> {
             return this;
         }
 
-        public Builder CEP(Integer CEP) {
-            entity.CEP = CEP;
+        public Builder CEP(Integer cep) {
+            entity.cep = cep;
             return this;
         }
 
